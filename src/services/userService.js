@@ -21,6 +21,9 @@ async function getUserById(id) {
       where: {
         id,
       },
+      include: {
+        userData: true,
+      },
     });
     return response;
   } catch (error) {

@@ -20,7 +20,7 @@ async function login(email, password) {
     const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, {
       expiresIn: 60 * 60 * 24 * 7,
     });
-    return { token, id };
+    return { token, Id: user.id };
   } catch (error) {
     throw error;
   }
