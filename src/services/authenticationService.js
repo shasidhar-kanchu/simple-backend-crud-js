@@ -6,10 +6,7 @@ const prisma = new PrismaClient();
 
 async function login(email, password) {
   try {
-    console.log(email, password);
-
     const user = await getUserByEmail(email);
-    console.log(user);
     if (!user) {
       throw new Error("Invalid Email");
     }
@@ -38,7 +35,6 @@ async function signup(fullName, email, password) {
     });
     return user;
   } catch (error) {
-    console.log("Service Start ", error.message, "Service");
     if (error.code === "P2002") throw new Error("Email already exists");
     else throw error;
   }
