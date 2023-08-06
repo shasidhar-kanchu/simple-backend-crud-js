@@ -6,13 +6,17 @@ const {
   deleteUser,
 } = require("../controllers/userController");
 const { signup, login } = require("../controllers/authenticationController");
-const router = Router();
+const { sampleEntryData } = require("../utils/sampleEntryData");
+const userRouter = new Router();
+const authRouter = new Router();
 
-router.get("/user/login", login);
-router.post("/user/signup", signup);
-router.get("/users", getUsers);
-router.get("/users/:id", getUserById);
-router.put("/users/:id", updateUser);
-router.delete("/users/:id", deleteUser);
+authRouter.get("/login", login);
+authRouter.post("/signup", signup);
 
-module.exports = router;
+userRouter.get("/", getUsers);
+userRouter.get("/sampledata", sampleEntryData);
+userRouter.get("/:id", getUserById);
+userRouter.put("/:id", updateUser);
+userRouter.delete("/:id", deleteUser);
+
+module.exports = { userRouter, authRouter };

@@ -2,13 +2,14 @@ const userService = require("../services/userService");
 
 async function getUsers(req, res, next) {
   try {
-    console.log("get users controller is called");
-    res.status(200).json({ message: "get users controller is called" });
+    const data = await userService.getUsers();
+    res.status(200).json(data);
   } catch (error) {
     console.log(error.message);
     next(error);
   }
 }
+
 async function getUserById(req, res, next) {
   try {
     const data = await userService.getUserById(req.params.id);
@@ -17,9 +18,10 @@ async function getUserById(req, res, next) {
     next(error);
   }
 }
+
 async function updateUser(req, res, next) {
   try {
-    const data = await userService.updateUser(req.params.id);
+    const data = await userService.updateUser(req.params.id, req.body);
     res.status(200).json({ data });
   } catch (error) {
     next(error);

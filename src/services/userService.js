@@ -4,7 +4,11 @@ const prisma = new PrismaClient();
 
 async function getUsers() {
   try {
-    const response = await prisma.user.findMany();
+    const response = await prisma.user.findMany({
+      include: {
+        userData: true,
+      },
+    });
     return response;
   } catch (error) {
     console.log(error.message);
@@ -13,25 +17,25 @@ async function getUsers() {
 }
 async function getUserById(id) {
   try {
-    const response = await prisma.user.findUnique({
+    const response = await prisma.user.findUniqueOrThrow({
       where: {
         id,
       },
     });
     return response;
   } catch (error) {
-    console.log(error.message);
     throw error;
   }
 }
 
 async function getUserByEmail(email) {
   try {
-    const response = await prisma.user.findUnique({
+    const response = await prisma.user.findUniqueOrThrow({
       where: {
         email,
       },
     });
+    console.log(response);
     return response;
   } catch (error) {
     console.log(error.message);
@@ -39,13 +43,27 @@ async function getUserByEmail(email) {
   }
 }
 
-async function updateUser(id, ...data) {
+async function updateUser(id, data) {
   try {
     const response = await prisma.user.update({
+      select: {
+        fullName: true,
+        email: true,
+        userData: {
+          select: { description: true, age: true, gender: true },
+        },
+      },
       where: {
         id,
       },
-      data,
+      data: {
+        userData: {
+          upsert: {
+            create: data,
+            update: data,
+          },
+        },
+      },
     });
     return response;
   } catch (error) {
@@ -53,18 +71,13 @@ async function updateUser(id, ...data) {
     throw error;
   }
 }
-async function addUser(req, res, next) {
+async function deleteUser(id) {
   try {
-    const response = await prisma.user.findMany();
-    return response;
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-}
-async function deleteUser(req, res, next) {
-  try {
-    const response = await prisma.user.findMany();
+    const response = await prisma.user.delete({
+      where: {
+        id,
+      },
+    });
     return response;
   } catch (error) {
     console.log(error.message);
@@ -77,6 +90,5 @@ module.exports = {
   getUserById,
   getUserByEmail,
   updateUser,
-  addUser,
   deleteUser,
 };

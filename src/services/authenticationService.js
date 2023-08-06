@@ -1,21 +1,26 @@
 const { getUserByEmail } = require("../services/userService");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 async function login(email, password) {
   try {
+    console.log(email, password);
+
     const user = await getUserByEmail(email);
+    console.log(user);
     if (!user) {
-      res.status(404).json({ message: "Invalid Email" });
+      throw new Error("Invalid Email");
     }
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      res.status(400).json({ message: "Password is not valid" });
+      throw new Error("Password is not valid");
     }
-    const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY, {
+    const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, {
       expiresIn: 60 * 60 * 24 * 7,
     });
-    return token;
+    return { token, id };
   } catch (error) {
     throw error;
   }
@@ -33,8 +38,9 @@ async function signup(fullName, email, password) {
     });
     return user;
   } catch (error) {
-    console.log(error, "Service");
+    console.log("Service Start ", error.message, "Service");
     if (error.code === "P2002") throw new Error("Email already exists");
+    else throw error;
   }
 }
 

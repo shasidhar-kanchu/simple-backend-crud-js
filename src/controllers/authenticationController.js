@@ -4,9 +4,9 @@ const jwt = require("jsonwebtoken");
 
 async function login(req, res, next) {
   try {
-    const { email, password } = req.query;
-    const token = await auth.login(email, password);
-    res.status(200).json({ token });
+    const { email, password } = req.body;
+    const data = await auth.login(email, password);
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
@@ -14,7 +14,7 @@ async function login(req, res, next) {
 
 async function signup(req, res, next) {
   try {
-    const { fullName, email, password } = req.query;
+    const { fullName, email, password } = req.body;
     const data = await auth.signup(fullName, email, password);
     res.status(201).json({
       message:
